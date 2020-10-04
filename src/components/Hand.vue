@@ -1,7 +1,7 @@
 <template>
   <ul id="hand">
     <li v-for="(x, index) in hand" :key="index">
-      <Card :pos="x"/>
+      <Card :pos="x" @click.native="doSomething(index)"/>
       <!--      <Placeholder/>-->
     </li>
   </ul>
@@ -10,6 +10,7 @@
 
 <script>
 import Card from "@/components/Card";
+import publicStore from "@/publicStore";
 // import Placeholder from "@/components/Placeholder";
 
 export default {
@@ -20,8 +21,16 @@ export default {
   components: {
     // Placeholder,
     Card,
+  },
+  methods: {
+    doSomething: function (index) {
+      publicStore.clickOnHand(index)
+      console.log(index)
+      return "DSAD"
+    },
+  },
+
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

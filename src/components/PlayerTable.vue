@@ -20,13 +20,13 @@
       <tr>
         <td v-for="(x, index) in table.player_row_1" :key="index">
           <Card @click.native="doSomething(index)" v-if="-1 != x" :pos="x"/>
-          <PlaceHolder v-else/>
+          <PlaceHolder  @click.native="doSomething(index)" v-else/>
         </td>
       </tr>
       <tr>
         <td v-for="(x, index) in table.player_row_2" :key="index">
           <Card @click.native="doSomething(index)" v-if="-1 != x" :pos="x"/>
-          <PlaceHolder v-else/>
+          <PlaceHolder  @click.native="doSomething(index)" v-else/>
         </td>
       </tr>
     </table>
@@ -50,9 +50,9 @@ export default {
     table: Object,
   },
   methods: {
-    doSomething: function (event) {
-      publicStore.setMessageAction("DSADSA")
-      console.log(event)
+    doSomething: function (index) {
+      publicStore.clickOnPlayerRow(index)
+      console.log(index)
       return "DSAD"
     }
   }
