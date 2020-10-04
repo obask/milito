@@ -1,18 +1,28 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <PlayerTables :table="appStore.table"/>
+    <Hand :hand="appStore.hand"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import PlayerTables from '@/components/PlayerTable'
+import Hand from "@/components/Hand";
+import publicStore from "@/publicStore";
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    PlayerTables,
+    Hand,
+  },
+  data() {
+    return {
+      msg1: "Welcome to Milito!",
+      appStore: publicStore.state,
+    }
+  },
 }
 </script>
 
@@ -21,8 +31,7 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  /*text-align: center;*/
+  color: rebeccapurple;
 }
 </style>
