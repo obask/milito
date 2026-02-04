@@ -1,0 +1,17 @@
+{
+  "name": "@arena/game-milito",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./server/routes.ts",
+  "exports": {
+    "./server": {
+      "import": "./server/routes.ts"
+    },
+    "./client": {
+      "import": "./client/components/index.ts"
+    },
+    "./shared": {
+      "import": "./shared/types.ts"
+    }
+  }
+}

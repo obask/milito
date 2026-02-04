@@ -1,0 +1,25 @@
+{
+  "name": "@arena/platform-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./index.ts",
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "build": "bun build index.ts --outdir ./dist",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "better-auth": "^1.2.8",
+    "drizzle-orm": "^0.39.1",
+    "elysia": "^1.2.25",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.4",
+    "drizzle-kit": "^0.30.4",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1767808909815,
+      "tag": "0000_unique_gateway",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1767810105144,
+      "tag": "0001_nostalgic_purifiers",
+      "breakpoints": true
+    }
+  ]
+}
