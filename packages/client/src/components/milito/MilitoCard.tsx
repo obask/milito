@@ -14,31 +14,24 @@ const factionPrefix: Record<MilitoFaction, string> = {
   alexandrian_macedonian: 'am',
 }
 
-export function MilitoCard({
-  unitType,
-  faction,
-  onClick,
-  rotated,
-  selected,
-  disabled,
-}: MilitoCardProps) {
-  const prefix = factionPrefix[faction]
-  const imagePath = unitType
-    ? `/assets/milito/${faction}/${prefix}_${unitType}.jpeg`
+export function MilitoCard(props: MilitoCardProps) {
+  const prefix = () => factionPrefix[props.faction]
+  const imagePath = () => props.unitType
+    ? `/assets/milito/${props.faction}/${prefix()}_${props.unitType}.jpeg`
     : '/assets/milito/plain.jpeg'
 
   return (
     <img
-      src={imagePath}
+      src={imagePath()}
       width={80}
       height={112}
-      alt={unitType || 'card back'}
-      onClick={disabled ? undefined : onClick}
-      className={`
+      alt={props.unitType || 'card back'}
+      onClick={props.disabled ? undefined : props.onClick}
+      class={`
         cursor-pointer transition-all
-        ${rotated ? 'rotate-90' : ''}
-        ${selected ? 'ring-4 ring-yellow-400 scale-105' : ''}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
+        ${props.rotated ? 'rotate-90' : ''}
+        ${props.selected ? 'ring-4 ring-yellow-400 scale-105' : ''}
+        ${props.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
       `}
     />
   )

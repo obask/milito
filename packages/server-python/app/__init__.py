@@ -1,0 +1,1 @@
+"""Milito Arena FastAPI server."""

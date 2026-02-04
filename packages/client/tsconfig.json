@@ -3,16 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "../",
-    "jsx": "react-jsx",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["vite/client"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@app/server/*": ["../server/*"]
+      "@/*": ["./src/*"]
     },
     "noEmit": true
   },
-  "include": ["src/**/*", "../server/src/**/*"]
+  "include": ["src/**/*"]
 }
