@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useLogin } from '@/lib/queries'
 import { apiClient } from '@/lib/queries'
 import { useQueryClient } from '@tanstack/react-query'
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react'
+import { LogIn, Mail, Lock, AlertCircle, FlaskConical } from 'lucide-react'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -115,31 +115,38 @@ function LoginPage() {
             >
               {loginMutation.isPending ? 'Logging in...' : 'Login'}
             </button>
-
-            <button
-              type="button"
-              disabled={loginMutation.isPending}
-              onClick={() => {
-                setError('')
-                loginMutation.mutate(
-                  { email: 'test@example.com', password: 'password123' },
-                  {
-                    onSuccess: async (data) => {
-                      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
-                      await router.invalidate()
-                      router.navigate({ to: '/dashboard' })
-                    },
-                    onError: (err) => {
-                      setError(err.message)
-                    },
-                  },
-                )
-              }}
-              className="w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 text-gray-300 font-medium rounded-lg border border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Login as test user
-            </button>
           </form>
+
+          <div className="mt-6 flex items-center gap-4">
+            <div className="flex-1 h-px bg-slate-600" />
+            <span className="text-gray-400 text-sm">or</span>
+            <div className="flex-1 h-px bg-slate-600" />
+          </div>
+
+          <button
+            type="button"
+            disabled={loginMutation.isPending}
+            onClick={() => {
+              setError('')
+              loginMutation.mutate(
+                { email: 'test@example.com', password: 'password123' },
+                {
+                  onSuccess: async () => {
+                    await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+                    await router.invalidate()
+                    router.navigate({ to: '/dashboard' })
+                  },
+                  onError: (err) => {
+                    setError(err.message)
+                  },
+                },
+              )
+            }}
+            className="mt-6 w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 text-gray-300 font-medium rounded-lg border border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            <FlaskConical className="w-5 h-5" />
+            Login as Test User
+          </button>
 
           <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">

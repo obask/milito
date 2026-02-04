@@ -11,18 +11,18 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"pnpm --filter @arena/platform-server dev\" \"pnpm --filter @arena/platform-client dev\"",
-    "dev:server": "pnpm --filter @arena/platform-server dev",
-    "dev:client": "pnpm --filter @arena/platform-client dev",
-    "build": "pnpm --filter @arena/platform-shared build && pnpm --filter @arena/platform-server build && pnpm --filter @arena/platform-client build",
-    "build:server": "pnpm --filter @arena/platform-shared build && pnpm --filter @arena/platform-server build",
-    "build:client": "pnpm --filter @arena/platform-shared build && pnpm --filter @arena/platform-client build",
-    "start:server": "pnpm --filter @arena/platform-server start",
-    "start:client": "pnpm --filter @arena/platform-client preview",
-    "db:generate": "pnpm --filter @arena/platform-server db:generate",
-    "db:migrate": "pnpm --filter @arena/platform-server db:migrate",
-    "db:push": "pnpm --filter @arena/platform-server db:push",
-    "db:studio": "pnpm --filter @arena/platform-server db:studio"
+    "dev": "concurrently \"pnpm --filter @app/server dev\" \"pnpm --filter @app/client dev\"",
+    "dev:server": "pnpm --filter @app/server dev",
+    "dev:client": "pnpm --filter @app/client dev",
+    "build": "pnpm --filter @app/shared build && pnpm --filter @app/server build && pnpm --filter @app/client build",
+    "build:server": "pnpm --filter @app/shared build && pnpm --filter @app/server build",
+    "build:client": "pnpm --filter @app/shared build && pnpm --filter @app/client build",
+    "start:server": "pnpm --filter @app/server start",
+    "start:client": "pnpm --filter @app/client preview",
+    "db:generate": "pnpm --filter @app/server db:generate",
+    "db:migrate": "pnpm --filter @app/server db:migrate",
+    "db:push": "pnpm --filter @app/server db:push",
+    "db:studio": "pnpm --filter @app/server db:studio"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

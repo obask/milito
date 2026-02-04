@@ -1,101 +1,57 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useGames } from '@/lib/queries'
-import { Gamepad2, Users, ArrowRight } from 'lucide-react'
+import { Swords, Users, ArrowRight } from 'lucide-react'
 
 export const Route = createFileRoute('/games')({
-  component: GamesGallery,
+  component: MilitoLanding,
 })
 
-interface Game {
-  id: string
-  name: string
-  description: string
-  minPlayers: number
-  maxPlayers: number
-  imageUrl: string | null
-}
-
-function GamesGallery() {
-  const { data: games, isLoading } = useGames()
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading games...</div>
-      </div>
-    )
-  }
-
+function MilitoLanding() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <div className="max-w-7xl mx-auto pt-8">
+      <div className="max-w-4xl mx-auto pt-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-xl">
-              <Gamepad2 className="w-8 h-8 text-white" />
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center bg-gradient-to-r from-amber-500 to-red-500 p-4 rounded-2xl mb-6">
+            <Swords className="w-12 h-12 text-white" />
+          </div>
+          <h1 className="text-5xl font-bold text-white mb-4">Milito</h1>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Ancient tactical card game. Deploy units on a 5-column battlefield to conquer territory!
+          </p>
+        </div>
+
+        {/* Game Card */}
+        <Link
+          to="/lobby"
+          search={{ gameId: 'milito' }}
+          className="group block bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 hover:border-amber-500 transition-all hover:scale-[1.02] cursor-pointer max-w-xl mx-auto"
+        >
+          <div className="flex flex-col items-center">
+            <div className="text-8xl mb-6">⚔️</div>
+
+            <div className="flex items-center gap-2 text-gray-400 mb-6">
+              <Users size={20} />
+              <span className="text-lg">2 players</span>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">Game Gallery</h1>
-              <p className="text-gray-400">Choose a game to play with friends</p>
+
+            <div className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-red-500 rounded-lg text-white font-semibold text-lg group-hover:from-amber-600 group-hover:to-red-600 transition-all">
+              Play Now
+              <ArrowRight size={20} />
             </div>
           </div>
+        </Link>
 
+        {/* View Active Rooms */}
+        <div className="text-center mt-8">
           <Link
             to="/lobby"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors"
+            search={{ gameId: 'milito' }}
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
-            <Users size={20} />
-            View Active Games
-            <ArrowRight size={16} />
+            <Users size={18} />
+            View Active Rooms
           </Link>
         </div>
-
-        {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(games as Game[] | undefined)?.map((game) => (
-            <Link
-              key={game.id}
-              to="/lobby"
-              search={{ gameId: game.id }}
-              className="group bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:border-purple-500 transition-all hover:scale-105 cursor-pointer"
-            >
-              <div className="flex flex-col h-full">
-                {/* Game Icon */}
-                <div className="text-6xl mb-4 text-center">{game.imageUrl}</div>
-
-                {/* Game Info */}
-                <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
-                  {game.name}
-                </h3>
-
-                <p className="text-gray-400 mb-4 flex-grow">{game.description}</p>
-
-                {/* Players Info */}
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <Users size={16} />
-                  <span>
-                    {game.minPlayers === game.maxPlayers
-                      ? `${game.minPlayers} players`
-                      : `${game.minPlayers}-${game.maxPlayers} players`}
-                  </span>
-                </div>
-
-                {/* Play Button */}
-                <div className="mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg text-white font-semibold group-hover:from-purple-600 group-hover:to-pink-600 transition-all">
-                  Play Now
-                  <ArrowRight size={16} />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {(!games || games.length === 0) && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">No games available yet</p>
-          </div>
-        )}
       </div>
     </div>
   )

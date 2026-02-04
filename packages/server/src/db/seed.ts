@@ -5,30 +5,6 @@ import { eq } from 'drizzle-orm'
 
 const sampleGames = [
   {
-    id: 'memory-match',
-    name: 'Memory Match',
-    description: 'Classic card matching game. Flip cards to find matching pairs!',
-    minPlayers: 1,
-    maxPlayers: 4,
-    imageUrl: '🃏',
-  },
-  {
-    id: 'number-battle',
-    name: 'Number Battle',
-    description: 'Compare numbers! Higher card wins the round.',
-    minPlayers: 2,
-    maxPlayers: 4,
-    imageUrl: '🎲',
-  },
-  {
-    id: 'quick-draw',
-    name: 'Quick Draw',
-    description: 'React fast! First to click the matching card wins.',
-    minPlayers: 2,
-    maxPlayers: 6,
-    imageUrl: '⚡',
-  },
-  {
     id: 'milito',
     name: 'Milito',
     description: 'Ancient tactical card game. Deploy units on a 5-column battlefield to conquer territory!',

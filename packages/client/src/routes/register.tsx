@@ -2,7 +2,7 @@ import { createFileRoute, Link, useRouter, redirect } from '@tanstack/react-rout
 import { useState } from 'react'
 import { useRegister, apiClient } from '@/lib/queries'
 import { useQueryClient } from '@tanstack/react-query'
-import { UserPlus, Mail, Lock, User, AlertCircle } from 'lucide-react'
+import { UserPlus, Mail, Lock, User, AlertCircle, FlaskConical } from 'lucide-react'
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,
@@ -137,6 +137,25 @@ function RegisterPage() {
               {registerMutation.isPending ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
+
+          <div className="mt-6 flex items-center gap-4">
+            <div className="flex-1 h-px bg-slate-600" />
+            <span className="text-gray-400 text-sm">or</span>
+            <div className="flex-1 h-px bg-slate-600" />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setName('Test User')
+              setEmail('test@example.com')
+              setPassword('password123')
+            }}
+            className="mt-6 w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 text-gray-300 font-medium rounded-lg border border-slate-600 transition-all flex items-center justify-center gap-2"
+          >
+            <FlaskConical className="w-5 h-5" />
+            Fill Test Account
+          </button>
 
           <div className="mt-6 text-center">
             <p className="text-gray-400 text-sm">

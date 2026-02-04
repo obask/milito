@@ -1,2 +1,4 @@
 packages:
   - 'packages/*'
+  - 'packages/platform/*'
+  - 'packages/games/*'
