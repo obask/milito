@@ -8,21 +8,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@elysiajs/eden": "^1.2.0",
-    "@tanstack/react-query": "^5.66.1",
-    "@tanstack/react-router": "^1.114.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@elysiajs/eden": "^1.3.0",
+    "@solidjs/router": "^0.15.0",
+    "@tanstack/solid-query": "^5.62.0",
+    "lucide-solid": "^0.561.0",
+    "solid-js": "^1.9.0"
   },
   "devDependencies": {
-    "@tanstack/router-plugin": "^1.114.3",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
-    "tailwindcss": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.6",
+    "tailwindcss": "^4.0.6",
     "typescript": "^5.7.2",
-    "vite": "^7.0.0"
+    "vite": "^7.1.7",
+    "vite-plugin-solid": "^2.11.0",
+    "vite-tsconfig-paths": "^6.0.2"
   }
 }

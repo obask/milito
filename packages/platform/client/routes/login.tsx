@@ -1,46 +1,37 @@
-import { createFileRoute, Link, useRouter, redirect } from '@tanstack/react-router'
-import { useState } from 'react'
-import { useLogin } from '@/lib/queries'
-import { apiClient } from '@/lib/queries'
-import { useQueryClient } from '@tanstack/react-query'
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react'
+import { A, useNavigate } from '@solidjs/router'
+import { createSignal, onMount, Show } from 'solid-js'
+import { createLogin, apiClient } from '@/lib/queries'
+import { useQueryClient } from '@tanstack/solid-query'
+import { LogIn, Mail, Lock, AlertCircle } from 'lucide-solid'
 
-export const Route = createFileRoute('/login')({
-  component: LoginPage,
-  beforeLoad: async () => {
+export default function LoginPage() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const [email, setEmail] = createSignal('')
+  const [password, setPassword] = createSignal('')
+  const [error, setError] = createSignal('')
+
+  const loginMutation = createLogin()
+
+  // Redirect if already logged in
+  onMount(async () => {
     const user = await apiClient.auth.me()
     if (user) {
-      throw redirect({
-        to: '/dashboard',
-      })
+      navigate('/dashboard', { replace: true })
     }
-  },
-})
+  })
 
-function LoginPage() {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-
-  const loginMutation = useLogin()
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault()
     setError('')
-    console.log('Attempting login with:', { email, password: '***' })
     loginMutation.mutate(
-      { email, password },
+      { email: email(), password: password() },
       {
-        onSuccess: async (data) => {
-          console.log('Login success:', data)
+        onSuccess: async () => {
           await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
-          await router.invalidate()
-          router.navigate({ to: '/dashboard' })
+          navigate('/dashboard')
         },
         onError: (err) => {
-          console.error('Login error:', err)
           setError(err.message)
         },
       },
@@ -48,40 +39,40 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-2xl p-8">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-xl">
-              <LogIn className="w-8 h-8 text-white" />
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+      <div class="w-full max-w-md">
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-2xl p-8">
+          <div class="flex items-center justify-center gap-3 mb-8">
+            <div class="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-xl">
+              <LogIn class="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white">Login</h1>
+            <h1 class="text-3xl font-bold text-white">Login</h1>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-200 text-sm">{error}</p>
+          <Show when={error()}>
+            <div class="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-start gap-3">
+              <AlertCircle class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <p class="text-red-200 text-sm">{error()}</p>
             </div>
-          )}
+          </Show>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} class="space-y-6">
             <div>
               <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-300 mb-2"
+                for="email"
+                class="block text-sm font-medium text-gray-300 mb-2"
               >
                 Email
               </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <div class="relative">
+                <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={email()}
+                  onInput={(e) => setEmail(e.currentTarget.value)}
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  class="w-full pl-11 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                   placeholder="you@example.com"
                 />
               </div>
@@ -89,20 +80,20 @@ function LoginPage() {
 
             <div>
               <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-300 mb-2"
+                for="password"
+                class="block text-sm font-medium text-gray-300 mb-2"
               >
                 Password
               </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <div class="relative">
+                <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={password()}
+                  onInput={(e) => setPassword(e.currentTarget.value)}
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                  class="w-full pl-11 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -111,45 +102,21 @@ function LoginPage() {
             <button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loginMutation.isPending ? 'Logging in...' : 'Login'}
             </button>
-
-            <button
-              type="button"
-              disabled={loginMutation.isPending}
-              onClick={() => {
-                setError('')
-                loginMutation.mutate(
-                  { email: 'test@example.com', password: 'password123' },
-                  {
-                    onSuccess: async (data) => {
-                      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
-                      await router.invalidate()
-                      router.navigate({ to: '/dashboard' })
-                    },
-                    onError: (err) => {
-                      setError(err.message)
-                    },
-                  },
-                )
-              }}
-              className="w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 text-gray-300 font-medium rounded-lg border border-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Login as test user
-            </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
+          <div class="mt-6 text-center">
+            <p class="text-gray-400 text-sm">
               Don't have an account?{' '}
-              <Link
-                to="/register"
-                className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+              <A
+                href="/register"
+                class="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
               >
                 Sign up
-              </Link>
+              </A>
             </p>
           </div>
         </div>

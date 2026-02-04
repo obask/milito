@@ -1,3 +1,4 @@
+import { For } from 'solid-js'
 import { MilitoCard } from './MilitoCard'
 import { MilitoPlaceholder } from './MilitoPlaceholder'
 import type { MilitoFaction, MilitoPlayerTable, MilitoUnitType } from '@app/shared'
@@ -16,13 +17,7 @@ function getUnitType(value: number | null): MilitoUnitType | undefined {
   return MILITO_UNIT_TYPES[value] as MilitoUnitType
 }
 
-export function MilitoBoard({
-  table,
-  faction,
-  opponentFaction,
-  onColumnClick,
-  selectingColumn,
-}: MilitoBoardProps) {
+export function MilitoBoard(props: MilitoBoardProps) {
   const renderRow = (
     row: (number | null)[],
     rowFaction: MilitoFaction,
@@ -30,41 +25,43 @@ export function MilitoBoard({
     rotated: boolean = false,
   ) => (
     <tr>
-      {row.map((value, index) => {
-        const unitType = getUnitType(value)
-        return (
-          <td key={index} className="p-1">
-            {unitType ? (
-              <MilitoCard
-                unitType={unitType}
-                faction={rowFaction}
-                onClick={clickable ? () => onColumnClick?.(index) : undefined}
-                rotated={rotated}
-              />
-            ) : (
-              <MilitoPlaceholder
-                onClick={clickable ? () => onColumnClick?.(index) : undefined}
-                highlighted={selectingColumn && clickable}
-              />
-            )}
-          </td>
-        )
-      })}
+      <For each={row}>
+        {(value, index) => {
+          const unitType = getUnitType(value)
+          return (
+            <td class="p-1">
+              {unitType ? (
+                <MilitoCard
+                  unitType={unitType}
+                  faction={rowFaction}
+                  onClick={clickable ? () => props.onColumnClick?.(index()) : undefined}
+                  rotated={rotated}
+                />
+              ) : (
+                <MilitoPlaceholder
+                  onClick={clickable ? () => props.onColumnClick?.(index()) : undefined}
+                  highlighted={props.selectingColumn && clickable}
+                />
+              )}
+            </td>
+          )
+        }}
+      </For>
     </tr>
   )
 
   return (
-    <div className="bg-amber-100 p-4 rounded-lg inline-block">
+    <div class="bg-amber-100 p-4 rounded-lg inline-block">
       <table>
         <tbody>
           {/* Enemy rows (top) - opponent's perspective */}
-          {renderRow(table.enemy_row_2, opponentFaction, false)}
-          {renderRow(table.enemy_row_1, opponentFaction, false)}
+          {renderRow(props.table.enemy_row_2, props.opponentFaction, false)}
+          {renderRow(props.table.enemy_row_1, props.opponentFaction, false)}
           {/* Territory row (middle) - contested */}
-          {renderRow(table.territory_row, faction, selectingColumn || false, true)}
+          {renderRow(props.table.territory_row, props.faction, props.selectingColumn || false, true)}
           {/* Player rows (bottom) - your units */}
-          {renderRow(table.player_row_1, faction, selectingColumn || false)}
-          {renderRow(table.player_row_2, faction, selectingColumn || false)}
+          {renderRow(props.table.player_row_1, props.faction, props.selectingColumn || false)}
+          {renderRow(props.table.player_row_2, props.faction, props.selectingColumn || false)}
         </tbody>
       </table>
     </div>

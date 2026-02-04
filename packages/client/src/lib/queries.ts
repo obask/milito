@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { createQuery, createMutation, useQueryClient } from '@tanstack/solid-query'
 import { api } from './api'
 
 // Helper to extract error message from Eden response
@@ -13,8 +13,8 @@ function getErrorMessage(error: unknown): string {
 }
 
 // Auth queries and mutations using Better-Auth native endpoints
-export function useMe() {
-  return useQuery({
+export function createMe() {
+  return createQuery(() => ({
     queryKey: ['auth', 'me'],
     queryFn: async () => {
       const res = await fetch('/api/auth/get-session', {
@@ -26,12 +26,12 @@ export function useMe() {
     },
     retry: false,
     refetchOnWindowFocus: false,
-  })
+  }))
 }
 
-export function useLogin() {
+export function createLogin() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { email: string; password: string }) => {
       const res = await fetch('/api/auth/sign-in/email', {
         method: 'POST',
@@ -48,12 +48,12 @@ export function useLogin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
     },
-  })
+  }))
 }
 
-export function useRegister() {
+export function createRegister() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { email: string; password: string; name: string }) => {
       const res = await fetch('/api/auth/sign-up/email', {
         method: 'POST',
@@ -70,12 +70,12 @@ export function useRegister() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
     },
-  })
+  }))
 }
 
-export function useLogout() {
+export function createLogout() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async () => {
       const res = await fetch('/api/auth/sign-out', {
         method: 'POST',
@@ -89,66 +89,68 @@ export function useLogout() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
     },
-  })
+  }))
 }
 
 // Games queries and mutations
-export function useGames() {
-  return useQuery({
+export function createGames() {
+  return createQuery(() => ({
     queryKey: ['games'],
     queryFn: async () => {
       const res = await fetch('/api/games', { credentials: 'include' })
       if (!res.ok) throw new Error('Failed to fetch games')
       return res.json()
     },
-  })
+  }))
 }
 
-export function useGame(gameId: string | undefined) {
-  return useQuery({
-    queryKey: ['games', gameId],
+export function createGame(gameId: () => string | undefined) {
+  return createQuery(() => ({
+    queryKey: ['games', gameId()],
     queryFn: async () => {
-      if (!gameId) return null
-      const { data, error } = await api.api.games({ gameId }).get()
+      const id = gameId()
+      if (!id) return null
+      const { data, error } = await api.api.games({ gameId: id }).get()
       if (error) throw error
       if (data && 'error' in data) return null
       return data
     },
-    enabled: !!gameId,
-  })
+    enabled: !!gameId(),
+  }))
 }
 
-export function useRooms(options?: { gameId?: string; status?: 'waiting' | 'playing' | 'finished' }) {
-  return useQuery({
-    queryKey: ['rooms', options],
+export function createRooms(options: () => { gameId?: string; status?: 'waiting' | 'playing' | 'finished' } | undefined) {
+  return createQuery(() => ({
+    queryKey: ['rooms', options()],
     queryFn: async () => {
+      const opts = options()
       const params = new URLSearchParams()
-      if (options?.gameId) params.set('gameId', options.gameId)
-      if (options?.status) params.set('status', options.status)
+      if (opts?.gameId) params.set('gameId', opts.gameId)
+      if (opts?.status) params.set('status', opts.status)
       const url = `/api/games/rooms${params.toString() ? `?${params}` : ''}`
       const res = await fetch(url, { credentials: 'include' })
       if (!res.ok) throw new Error('Failed to fetch rooms')
       return res.json()
     },
-  })
+  }))
 }
 
-export function useRoom(roomId: string) {
-  return useQuery({
-    queryKey: ['rooms', roomId],
+export function createRoom(roomId: () => string) {
+  return createQuery(() => ({
+    queryKey: ['rooms', roomId()],
     queryFn: async () => {
-      const { data, error } = await api.api.games.rooms({ roomId }).get()
+      const { data, error } = await api.api.games.rooms({ roomId: roomId() }).get()
       if (error) throw error
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
     refetchInterval: 2000,
-  })
+  }))
 }
 
-export function useCreateRoom() {
+export function createCreateRoom() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { gameId: string; name: string; maxPlayers: number }) => {
       const res = await fetch('/api/games/rooms', {
         method: 'POST',
@@ -163,12 +165,12 @@ export function useCreateRoom() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     },
-  })
+  }))
 }
 
-export function useJoinRoom() {
+export function createJoinRoom() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const { data, error } = await api.api.games.rooms({ roomId: input.roomId }).join.post()
       if (error) throw new Error(getErrorMessage(error))
@@ -178,12 +180,12 @@ export function useJoinRoom() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     },
-  })
+  }))
 }
 
-export function useLeaveRoom() {
+export function createLeaveRoom() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const { data, error } = await api.api.games.rooms({ roomId: input.roomId }).leave.post()
       if (error) throw new Error(getErrorMessage(error))
@@ -193,104 +195,104 @@ export function useLeaveRoom() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rooms'] })
     },
-  })
+  }))
 }
 
-export function useStartGame() {
+export function createStartGame() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const { data, error } = await api.api.games.rooms({ roomId: input.roomId }).start.post()
       if (error) throw new Error(getErrorMessage(error))
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['rooms', variables.roomId] })
     },
-  })
+  }))
 }
 
 // Gameplay queries and mutations
-export function useGameState(roomId: string, enabled: boolean = true) {
-  return useQuery({
-    queryKey: ['gameplay', roomId],
+export function createGameState(roomId: () => string, enabled: () => boolean) {
+  return createQuery(() => ({
+    queryKey: ['gameplay', roomId()],
     queryFn: async () => {
-      const { data, error } = await api.api.gameplay({ roomId }).state.get()
+      const { data, error } = await api.api.gameplay({ roomId: roomId() }).state.get()
       if (error) throw error
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
-    enabled,
+    enabled: enabled(),
     refetchInterval: 1000,
-  })
+  }))
 }
 
-export function useInitializeGame() {
+export function createInitializeGame() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const { data, error } = await api.api.gameplay({ roomId: input.roomId }).initialize.post()
       if (error) throw new Error(getErrorMessage(error))
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['gameplay', variables.roomId] })
     },
-  })
+  }))
 }
 
-export function useFlipCard() {
+export function createFlipCard() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string; cardId: number }) => {
       const { data, error } = await api.api.gameplay({ roomId: input.roomId }).flip.post({ cardId: input.cardId })
       if (error) throw new Error(getErrorMessage(error))
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string; cardId: number }) => {
       queryClient.invalidateQueries({ queryKey: ['gameplay', variables.roomId] })
     },
-  })
+  }))
 }
 
-export function useResetFlipped() {
+export function createResetFlipped() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const { data, error } = await api.api.gameplay({ roomId: input.roomId }).reset.post()
       if (error) throw new Error(getErrorMessage(error))
       if (data && 'error' in data) throw new Error(data.message)
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['gameplay', variables.roomId] })
     },
-  })
+  }))
 }
 
 // Milito game queries and mutations
-export function useMilitoState(roomId: string, enabled: boolean = true) {
-  return useQuery({
-    queryKey: ['milito', roomId],
+export function createMilitoState(roomId: () => string, enabled: () => boolean) {
+  return createQuery(() => ({
+    queryKey: ['milito', roomId()],
     queryFn: async () => {
-      const res = await fetch(`/api/milito/${roomId}/state`, { credentials: 'include' })
+      const res = await fetch(`/api/milito/${roomId()}/state`, { credentials: 'include' })
       if (!res.ok) {
         const data = await res.json()
         throw new Error(data.message || 'Failed to fetch game state')
       }
       return res.json()
     },
-    enabled,
+    enabled: enabled(),
     refetchInterval: 1000,
-  })
+  }))
 }
 
-export function useInitializeMilito() {
+export function createInitializeMilito() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string }) => {
       const res = await fetch(`/api/milito/${input.roomId}/initialize`, {
         method: 'POST',
@@ -300,16 +302,16 @@ export function useInitializeMilito() {
       if (!res.ok) throw new Error(data.message || 'Failed to initialize')
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['milito', variables.roomId] })
       queryClient.invalidateQueries({ queryKey: ['rooms', variables.roomId] })
     },
-  })
+  }))
 }
 
-export function useMilitoSelectCard() {
+export function createMilitoSelectCard() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string; cardIndex: number }) => {
       const res = await fetch(`/api/milito/${input.roomId}/select-card`, {
         method: 'POST',
@@ -321,15 +323,15 @@ export function useMilitoSelectCard() {
       if (!res.ok) throw new Error(data.message || 'Failed to select card')
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string; cardIndex: number }) => {
       queryClient.invalidateQueries({ queryKey: ['milito', variables.roomId] })
     },
-  })
+  }))
 }
 
-export function useMilitoSelectColumn() {
+export function createMilitoSelectColumn() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string; columnIndex: number }) => {
       const res = await fetch(`/api/milito/${input.roomId}/select-column`, {
         method: 'POST',
@@ -341,15 +343,15 @@ export function useMilitoSelectColumn() {
       if (!res.ok) throw new Error(data.message || 'Failed to select column')
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string; columnIndex: number }) => {
       queryClient.invalidateQueries({ queryKey: ['milito', variables.roomId] })
     },
-  })
+  }))
 }
 
-export function useMilitoDiscard() {
+export function createMilitoDiscard() {
   const queryClient = useQueryClient()
-  return useMutation({
+  return createMutation(() => ({
     mutationFn: async (input: { roomId: string; cardIndex: number }) => {
       const res = await fetch(`/api/milito/${input.roomId}/discard`, {
         method: 'POST',
@@ -361,13 +363,13 @@ export function useMilitoDiscard() {
       if (!res.ok) throw new Error(data.message || 'Failed to discard')
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_: unknown, variables: { roomId: string; cardIndex: number }) => {
       queryClient.invalidateQueries({ queryKey: ['milito', variables.roomId] })
     },
-  })
+  }))
 }
 
-// Standalone API client for use outside React (e.g., in route loaders)
+// Standalone API client for use outside components (e.g., in route guards)
 export const apiClient = {
   auth: {
     me: async () => {

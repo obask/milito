@@ -1,3 +1,4 @@
+import { For, Show } from 'solid-js'
 import { MilitoCard } from './MilitoCard'
 import type { MilitoFaction, MilitoUnitType } from '@app/shared'
 import { MILITO_UNIT_TYPES } from '@app/shared'
@@ -11,35 +12,32 @@ interface MilitoHandProps {
   disabled?: boolean
 }
 
-export function MilitoHand({
-  hand,
-  faction,
-  onCardClick,
-  selectedCard,
-  discardedCards = [],
-  disabled,
-}: MilitoHandProps) {
+export function MilitoHand(props: MilitoHandProps) {
+  const discardedCards = () => props.discardedCards ?? []
+
   return (
-    <div className="flex gap-2 justify-center p-4 bg-gray-800 rounded-lg">
-      {hand.map((cardValue, index) => {
-        const unitType = MILITO_UNIT_TYPES[cardValue] as MilitoUnitType
-        const isDiscarded = discardedCards.includes(index)
+    <div class="flex gap-2 justify-center p-4 bg-gray-800 rounded-lg">
+      <For each={props.hand}>
+        {(cardValue, index) => {
+          const unitType = MILITO_UNIT_TYPES[cardValue] as MilitoUnitType
+          const isDiscarded = () => discardedCards().includes(index())
 
-        if (isDiscarded) {
-          return <div key={index} className="w-20 h-28" /> // Empty space for discarded
-        }
-
-        return (
-          <MilitoCard
-            key={index}
-            unitType={unitType}
-            faction={faction}
-            onClick={() => onCardClick?.(index)}
-            selected={selectedCard === index}
-            disabled={disabled}
-          />
-        )
-      })}
+          return (
+            <Show
+              when={!isDiscarded()}
+              fallback={<div class="w-20 h-28" />}
+            >
+              <MilitoCard
+                unitType={unitType}
+                faction={props.faction}
+                onClick={() => props.onCardClick?.(index())}
+                selected={props.selectedCard === index()}
+                disabled={props.disabled}
+              />
+            </Show>
+          )
+        }}
+      </For>
     </div>
   )
 }
