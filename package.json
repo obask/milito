@@ -11,8 +11,9 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently \"pnpm --filter @app/server dev\" \"pnpm --filter @app/client dev\"",
+    "dev": "concurrently \"pnpm dev:server-python\" \"pnpm --filter @app/client dev\"",
     "dev:server": "pnpm --filter @app/server dev",
+    "dev:server-python": "cd packages/server-python && ./venv/bin/uvicorn app.main:app --reload --port 3001",
     "dev:client": "pnpm --filter @app/client dev",
     "build": "pnpm --filter @app/shared build && pnpm --filter @app/server build && pnpm --filter @app/client build",
     "build:server": "pnpm --filter @app/shared build && pnpm --filter @app/server build",
@@ -22,7 +23,8 @@
     "db:generate": "pnpm --filter @app/server db:generate",
     "db:migrate": "pnpm --filter @app/server db:migrate",
     "db:push": "pnpm --filter @app/server db:push",
-    "db:studio": "pnpm --filter @app/server db:studio"
+    "db:studio": "pnpm --filter @app/server db:studio",
+    "python:setup": "cd packages/server-python && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt && ./venv/bin/python create_tables.py"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
