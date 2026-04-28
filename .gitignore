@@ -14,7 +14,4 @@ todos.json
 *.db
 *.db-shm
 *.db-wal
-pnpm-lock.yaml
-bun.lockb
-bun.lock
 
